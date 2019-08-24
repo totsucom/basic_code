@@ -12,6 +12,13 @@
  * その他の機能は自前で追加してください
  */
 
+/* 更新履歴
+ * 2019-8-24
+ * 　ボーレートの設定に間違いがありました。
+ *   生値は使えないためUART_BAUDの定義を変更しました。
+ *   今まで使えていたのが不思議。
+ */
+
 #include <AppHardwareApi.h>
 #include "utils.h"
 #include "ToCoNet.h"
@@ -31,7 +38,15 @@
 static uint32 u32Seq = 0;           // 送信パケットのシーケンス番号
 
 
-#define UART_BAUD 115200 	        // シリアルのボーレート
+//#define UARTBAUD (0x80000000 | 104             ) //   9600bps
+//#define UARTBAUD (0x80000000 |  52             ) //  19200bps
+//#define UARTBAUD (0x80000000 |  26             ) //  38400bps
+//#define UARTBAUD (0x80000000 |  23 | (11 << 16)) //  57600bps
+//#define UARTBAUD (0x80000000 |  13             ) //  76800bps
+  #define UARTBAUD (0x80000000 |  10 | (13 << 16)) // 115200bps
+//#define UARTBAUD (0x80000000 |   5 | (13 << 16)) // 230400bps
+//#define UARTBAUD (0x80000000 |   4             ) // 250000bps#define UART_BAUD 115200 	        // シリアルのボーレート
+
 static tsFILE sSerStream;           // シリアル用ストリーム
 static tsSerialPortSetup sSerPort;  // シリアルポートデスクリプタ
 
@@ -69,7 +84,7 @@ static void vSerialInit() {
 
     sSerPort.pu8SerialRxQueueBuffer = au8SerialRxBuffer;
     sSerPort.pu8SerialTxQueueBuffer = au8SerialTxBuffer;
-    sSerPort.u32BaudRate = UART_BAUD;
+    sSerPort.u32BaudRate = UARTBAUD;
     sSerPort.u16AHI_UART_RTS_LOW = 0xffff;
     sSerPort.u16AHI_UART_RTS_HIGH = 0xffff;
     sSerPort.u16SerialRxQueueSize = sizeof(au8SerialRxBuffer);
